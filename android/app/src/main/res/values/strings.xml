@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">TTA - Ejemplo</string>
+    <string name="user_label">Usuario:</string>
+    <string name="user_edit">Introduce DNI</string>
+    <string name="passwd_label">Contraseña:</string>
+    <string name="passwd_edit">Introduce contraseña</string>
+    <string name="button_login">Acceder</string>
+    <string name="login_failed">Login incorrecto</string>
+    <string name="button_test">Nuevo test</string>
+    <string name="button_exercise">Nuevo ejercicio</string>
+    <string name="button_track">Seguimiento</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="lesson">Lección</string>
+    <string name="login_activity">TTA - Login</string>
+    <string name="menu_activity">TTA - Menú</string>
+    <string name="not_implemented">Funcionalidad no implementada</string>
+    <string name="exercise_activity">TTA - Ejercicio</string>
+    <string name="test_activity">TTA - Test</string>
+    <string name="button_send">Enviar</string>
+    <string name="button_advise">Ver ayuda</string>
+    <string name="loading">Cargando ...</string>
+    <string name="correct">¡Correcto!</string>
+    <string name="incorrect">¡Has fallado!</string>
+    <string name="button_file">Subir fichero</string>
+    <string name="button_picture">Sacar foto</string>
+    <string name="button_audio">Grabar audio</string>
+    <string name="button_video">Grabar vídeo</string>
+    <string name="no_camera">Tu móvil no dispone de cámara</string>
+    <string name="no_app">No dispones de la aplicación necesaria</string>
+    <string name="permission_neccesary">Permiso necesario</string>
+    <string name="storage_rationale">El acceso al almacenamiento es necesario para poder guardar las fotos sacadas</string>
+    <string name="ok">OK</string>
+    <string name="no_micro">Tu móvil no dispone de micrófono</string>
+    <string name="sent">Enviado</string>
+</resources>
