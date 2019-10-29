@@ -1,5 +1,6 @@
 package eus.ehu.bi.tta.ejemplo.pl.viewmodel;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import androidx.lifecycle.LiveData;
@@ -18,8 +19,12 @@ public class ExerciseViewModel extends ViewModel {
 
     public void loadExercise() {
         int exId = user.getProfile().getCurrentExercise();
-        Exercise exercise = backend.getExercise(exId);
-        liveExercise.postValue(exercise);
+        try {
+            Exercise exercise = backend.getExercise(exId);
+            liveExercise.postValue(exercise);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public LiveData<Exercise> getExercise() {
@@ -29,8 +34,12 @@ public class ExerciseViewModel extends ViewModel {
     public void uploadSolution(InputStream is, String name) {
         int userId = user.getProfile().getId();
         int exId = liveExercise.getValue().getId();
-        backend.uploadSolution(userId, exId, is, name);
-        finished.postValue(name);
+        try {
+            backend.uploadSolution(userId, exId, is, name);
+            finished.postValue(name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public LiveData<String> isFinished() {

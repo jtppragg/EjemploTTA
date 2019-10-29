@@ -1,5 +1,7 @@
 package eus.ehu.bi.tta.ejemplo.pl.viewmodel;
 
+import java.io.IOException;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -23,15 +25,23 @@ public class TestViewModel extends ViewModel {
 
     public void loadTest() {
         int testId = Locator.getUserModel().getProfile().getCurrentTest();
-        Test test = backend.getTest(testId);
-        liveTest.postValue(test);
+        try {
+            Test test = backend.getTest(testId);
+            liveTest.postValue(test);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void send() {
         UserProfile user = Locator.getUserModel().getProfile();
         Test.Choice choice = getChoice();
-        backend.uploadChoice(user.getId(), choice.getId());
-        liveSent.postValue(choice.isCorrect());
+        try {
+            backend.uploadChoice(user.getId(), choice.getId());
+            liveSent.postValue(choice.isCorrect());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void finish() {

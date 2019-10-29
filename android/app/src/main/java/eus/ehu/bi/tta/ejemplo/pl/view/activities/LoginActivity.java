@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import androidx.appcompat.app.AppCompatActivity;
 import eus.ehu.bi.tta.ejemplo.R;
 import eus.ehu.bi.tta.ejemplo.bl.backend.Backend;
@@ -56,7 +58,12 @@ public class LoginActivity extends AppCompatActivity {
                 activity.loginView.getText().toString(),
                 activity.passwdView.getText().toString()
             );
-            return activity.backend.getUserProfile();
+            try {
+                return activity.backend.getUserProfile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         @Override
