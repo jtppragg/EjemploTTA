@@ -1,6 +1,8 @@
 package eus.ehu.bi.tta.ejemplo.pl.view.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +19,8 @@ import eus.ehu.bi.tta.ejemplo.pl.view.tasks.WeakTask;
 
 public class LoginActivity extends AppCompatActivity {
     private final Backend backend = Locator.getBackend();
+    private SharedPreferences prefs;
+    private static final String PREF_LOGIN = "login";
     private EditText loginView, passwdView;
 
     @Override
@@ -24,8 +28,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        prefs = getPreferences(Context.MODE_PRIVATE);
+
         loginView = findViewById(R.id.login);
         passwdView = findViewById(R.id.passwd);
+
+        String login = prefs.getString(PREF_LOGIN,null);
+        if( login != null ) {
+            loginView.setText(login);
+            passwdView.requestFocus();
+        }
     }
 
     public void login( View view ) {
@@ -34,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onLoginOk(UserProfile userProfile) {
         Locator.getUserModel().setProfile(userProfile);
+        prefs.edit().putString(PREF_LOGIN, loginView.getText().toString()).apply();
         Intent menuIntent = new Intent(this, MenuActivity.class);
         startActivity(menuIntent);
     }
