@@ -58,7 +58,7 @@ public class ExerciseActivity extends AppCompatActivity {
             findViewById(R.id.button_record_audio).setEnabled(false);
             findViewById(R.id.button_record_video).setEnabled(false);
             Toast.makeText(this,
-                String.format("Enviado: %s", getString(R.string.sent), name),
+                String.format("%s: %s", getString(R.string.sent), name),
                 Toast.LENGTH_SHORT).show();
         });
     }

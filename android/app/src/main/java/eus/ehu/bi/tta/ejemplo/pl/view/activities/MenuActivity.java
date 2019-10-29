@@ -27,8 +27,8 @@ public class MenuActivity extends AppCompatActivity {
         TextView textLesson = findViewById(R.id.menu_lesson);
         textLesson.setText(String.format("%s %d: %s",
             getString(R.string.lesson),
-            user.getProfile().getCurrentLesson().getId(),
-            user.getProfile().getCurrentLesson().getName())
+            user.getProfile().getCurrentLesson(),
+            user.getProfile().getLessonTitle())
         );
     }
 

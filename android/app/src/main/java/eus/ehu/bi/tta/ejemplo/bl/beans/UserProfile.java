@@ -1,10 +1,17 @@
 package eus.ehu.bi.tta.ejemplo.bl.beans;
 
+import com.google.gson.annotations.SerializedName;
+
 public class UserProfile {
     private int id;
+    @SerializedName("user")
     private String name;
-    private Lesson currentLesson;
+    @SerializedName("lessonNumber")
+    private int currentLesson;
+    private String lessonTitle;
+    @SerializedName("nextTest")
     private int currentTest;
+    @SerializedName("nextExercise")
     private int currentExercise;
 
     public int getId() {
@@ -23,12 +30,20 @@ public class UserProfile {
         this.name = name;
     }
 
-    public Lesson getCurrentLesson() {
+    public int getCurrentLesson() {
         return currentLesson;
     }
 
-    public void setCurrentLesson(Lesson currentLesson) {
+    public void setCurrentLesson(int currentLesson) {
         this.currentLesson = currentLesson;
+    }
+
+    public String getLessonTitle() {
+        return lessonTitle;
+    }
+
+    public void setLessonTitle(String lessonTitle) {
+        this.lessonTitle = lessonTitle;
     }
 
     public int getCurrentTest() {

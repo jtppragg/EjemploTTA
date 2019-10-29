@@ -3,7 +3,6 @@ package eus.ehu.bi.tta.ejemplo.bl.backend;
 import java.io.InputStream;
 
 import eus.ehu.bi.tta.ejemplo.bl.beans.Exercise;
-import eus.ehu.bi.tta.ejemplo.bl.beans.Lesson;
 import eus.ehu.bi.tta.ejemplo.bl.beans.Test;
 import eus.ehu.bi.tta.ejemplo.bl.beans.UserProfile;
 
@@ -14,15 +13,11 @@ public class MockBackend implements Backend {
 
     @Override
     public UserProfile getUserProfile() {
-        Lesson lesson = new Lesson();
-        lesson.setId(1);
-        lesson.setName("Introducción");
-
         UserProfile user = new UserProfile();
         user.setId(1);
         user.setName("John Doe");
-        user.setCurrentLesson(lesson);
-
+        user.setCurrentLesson(1);
+        user.setLessonTitle("Introducción");
         return user;
     }
 
@@ -63,7 +58,9 @@ public class MockBackend implements Backend {
         Test.Choice choice = new Test.Choice();
         choice.setWording(wording);
         choice.setAdvise(advise);
-        choice.setMime(mime);
+        Test.ResourceType type = new Test.ResourceType();
+        type.setMime(mime);
+        choice.setResourceType(type);
         choice.setCorrect(advise == null);
         test.getChoices().add(choice);
     }
