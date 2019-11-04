@@ -18,6 +18,7 @@ public class MockBackend implements Backend {
         user.setName("John Doe");
         user.setCurrentLesson(1);
         user.setLessonTitle("Introducción");
+        user.setPictureUrl("https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png");
         return user;
     }
 

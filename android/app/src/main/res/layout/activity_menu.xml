@@ -36,6 +36,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_track"
-        android:onClick="track"/>
+        android:text="@string/button_profile"
+        android:onClick="profile"/>
 </LinearLayout>

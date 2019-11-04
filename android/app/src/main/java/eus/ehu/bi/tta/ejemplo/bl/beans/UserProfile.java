@@ -13,6 +13,7 @@ public class UserProfile {
     private int currentTest;
     @SerializedName("nextExercise")
     private int currentExercise;
+    private String pictureUrl;
 
     public int getId() {
         return id;
@@ -60,5 +61,13 @@ public class UserProfile {
 
     public void setCurrentExercise(int currentExercise) {
         this.currentExercise = currentExercise;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 }

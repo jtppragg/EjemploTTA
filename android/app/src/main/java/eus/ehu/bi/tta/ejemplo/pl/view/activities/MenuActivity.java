@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import eus.ehu.bi.tta.ejemplo.R;
@@ -40,7 +39,7 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(new Intent(this, ExerciseActivity.class));
     }
 
-    public void track(View view) {
-        Toast.makeText(this, R.string.not_implemented, Toast.LENGTH_SHORT).show();
+    public void profile(View view) {
+        startActivity(new Intent(this, ProfileActivity.class));
     }
 }

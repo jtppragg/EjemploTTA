@@ -32,4 +32,8 @@
     <string name="ok">OK</string>
     <string name="no_micro">Tu móvil no dispone de micrófono</string>
     <string name="sent">Enviado</string>
+    <string name="button_profile">Perfil</string>
+    <string name="test">Test actual</string>
+    <string name="exercise">Ejercicio actual</string>
+    <string name="profile_activity">TTA - Perfil</string>
 </resources>
