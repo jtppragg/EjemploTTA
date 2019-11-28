@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LifecycleExample</string>
+    <string name="show_dialog">Mostrar diálogo</string>
+    <string name="pause">Actividad pausada</string>
+    <string name="my_dialog">Mi diálogo</string>
+    <string name="ok">OK</string>
+    <string name="orientation">Orientación vertical</string>
+</resources>
