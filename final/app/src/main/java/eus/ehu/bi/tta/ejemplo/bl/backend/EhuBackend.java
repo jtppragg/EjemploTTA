@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EhuBackend implements Backend {
-    private static final String URL = "http://u017633.ehu.eus:28080/ServidorTta/rest/tta/";
+    private static final String URL = "https://u017633.ehu.eus:28443/ServidorTta/rest/tta/";
     private EhuApi api;
     private String login;
 

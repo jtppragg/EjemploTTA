@@ -1,6 +1,7 @@
 package eus.ehu.bi.tta.ejemplo.pl.model;
 
 import eus.ehu.bi.tta.ejemplo.bl.backend.Backend;
+//import eus.ehu.bi.tta.ejemplo.bl.backend.EhuBackend;
 import eus.ehu.bi.tta.ejemplo.bl.backend.MockBackend;
 
 public final class Locator {
