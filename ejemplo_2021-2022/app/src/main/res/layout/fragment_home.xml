@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.fragments.HomeFragment">
+
+<TextView
+    android:id="@+id/menu_login"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+<TextView
+    android:id="@+id/menu_lesson"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+    android:layout_marginBottom="@dimen/main_margin"/>
+
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_test"
+    android:onClick="test"/>
+
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_exercise"
+    android:onClick="exercise"/>
+
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_profile"
+    android:onClick="profile"/>
+</LinearLayout>
