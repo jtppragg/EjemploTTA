@@ -18,8 +18,6 @@ import eus.ehu.tta.ejemplo.viewmodel.HomeViewModel;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);

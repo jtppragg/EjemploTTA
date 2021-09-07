@@ -15,4 +15,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcome">Bienvenido</string>
+    <string name="button_send">Enviar</string>
+    <string name="button_advise">Ver ayuda</string>
+    <string name="incorrect">¡Has fallado!</string>
+    <string name="correct">¡Correcto!</string>
 </resources>
