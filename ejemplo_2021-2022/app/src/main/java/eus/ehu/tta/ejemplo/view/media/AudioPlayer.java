@@ -1,8 +1,10 @@
 package eus.ehu.tta.ejemplo.view.media;
 
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import android.widget.MediaController;
 
@@ -29,8 +31,7 @@ public class AudioPlayer implements MediaController.MediaPlayerControl, MediaPla
     public void setAudioUri( Uri uri ) throws IOException {
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setDataSource(view.getContext(), uri);
-        player.prepare();
-        player.start();
+        player.prepareAsync();
     }
 
     public void release() {
@@ -43,6 +44,7 @@ public class AudioPlayer implements MediaController.MediaPlayerControl, MediaPla
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        player.start();
         controller.setMediaPlayer(this);
         controller.setAnchorView(view);
         controller.show(0);

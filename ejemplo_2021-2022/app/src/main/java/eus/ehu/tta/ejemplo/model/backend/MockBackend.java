@@ -51,9 +51,9 @@ public class MockBackend implements Backend {
                 "<html><body>The manifest describes the <b>components of the application</b>: the activities, services, broadcast receivers, and content providers that the application is composed of. It names the classes that implement each of the components and publishes their capabilities (for example, which Intent messages they can handle). These declarations let the Android system know what the components are and under what conditions they can be launched.</body></html>");
         addChoice(test, "Dependencias de otras librerías", null, null);
         addChoice(test, "Icono de la aplicación", "audio/mpeg",
-                "http://u017633.ehu.eus:28080/static/ServidorTta/AndroidManifest.mp4");
+                "https://labtel.ehu.eus/tta/AndroidManifest.mp4");
         addChoice(test, "Identificador único de la aplicación", "video/mp4",
-                "http://u017633.ehu.eus:28080/static/ServidorTta/AndroidManifest.mp4");
+                "https://labtel.ehu.eus/tta/AndroidManifest.mp4");
         return CompletableFuture.completedFuture(test);
     }
 
