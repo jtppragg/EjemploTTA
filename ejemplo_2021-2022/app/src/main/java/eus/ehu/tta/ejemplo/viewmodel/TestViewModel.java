@@ -25,9 +25,10 @@ public class TestViewModel extends BaseViewModel {
                 startLoad();
                 backend.getTest().handle((test, ex) -> {
                     endLoad();
-                    result.setValue(test);
                     if( ex != null )
                         ex.printStackTrace();
+                    else
+                        result.setValue(test);
                     return test;
                 });
                 return result;

@@ -19,4 +19,13 @@
     <string name="button_advise">Ver ayuda</string>
     <string name="incorrect">¡Has fallado!</string>
     <string name="correct">¡Correcto!</string>
+    <string name="button_file">Subir fichero</string>
+    <string name="button_picture">Sacar foto</string>
+    <string name="button_audio">Grabar audio</string>
+    <string name="button_video">Grabar vídeo</string>
+    <string name="no_camera">Tu móvil no dispone de cámara</string>
+    <string name="permission_neccesary">Permiso necesario</string>
+    <string name="ok">OK</string>
+    <string name="no_app">No dispones de la aplicación necesaria</string>
+    <string name="storage_rationale">El acceso al almacenamiento es necesario para poder guardar las fotos sacadas</string>
 </resources>
