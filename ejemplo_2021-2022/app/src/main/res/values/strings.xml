@@ -28,4 +28,5 @@
     <string name="ok">OK</string>
     <string name="no_app">No dispones de la aplicación necesaria</string>
     <string name="storage_rationale">El acceso al almacenamiento es necesario para poder guardar las fotos sacadas</string>
+    <string name="no_micro">Tu móvil no dispone de micrófono</string>
 </resources>
