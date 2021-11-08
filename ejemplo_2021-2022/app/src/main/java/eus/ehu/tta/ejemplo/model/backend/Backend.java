@@ -1,7 +1,5 @@
 package eus.ehu.tta.ejemplo.model.backend;
 
-import androidx.lifecycle.LiveData;
-
 import java.io.InputStream;
 
 import eus.ehu.tta.ejemplo.model.beans.Exercise;
@@ -13,7 +11,7 @@ public interface Backend {
     CompletableFuture<UserProfile> login();
     CompletableFuture<Void> logout();
 
-    LiveData<UserProfile> getUserProfile();
+    UserProfile getUserProfile();
 
     CompletableFuture<Test> getTest();
     CompletableFuture<Exercise> getExercise();

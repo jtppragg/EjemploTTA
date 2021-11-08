@@ -2,7 +2,6 @@ package eus.ehu.tta.ejemplo.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import eus.ehu.tta.ejemplo.model.Locator;
 import eus.ehu.tta.ejemplo.model.backend.Backend;
@@ -12,28 +11,21 @@ import eus.ehu.tta.ejemplo.model.beans.Test;
 public class TestViewModel extends BaseViewModel {
     private int selection = -1;
     private final Backend backend = Locator.getBackend();
-    private final LiveData<Test> liveTest;
+    private final MutableLiveData<Test> liveTest = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveSent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveFinished = new MutableLiveData<>();
     private boolean skipNotification, skipAdvise;
 
     public TestViewModel() {
-        liveTest = Transformations.switchMap(
-            backend.getUserProfile(),
-            user -> {
-                MutableLiveData<Test> result = new MutableLiveData<>();
-                startLoad();
-                backend.getTest().handle((test, ex) -> {
-                    endLoad();
-                    if( ex != null )
-                        ex.printStackTrace();
-                    else
-                        result.setValue(test);
-                    return test;
-                });
-                return result;
-            }
-        );
+        startLoad();
+        backend.getTest().handle((test, ex) -> {
+            endLoad();
+            if( ex != null )
+                ex.printStackTrace();
+            else
+                liveTest.setValue(test);
+            return test;
+        });
     }
 
     // Actions

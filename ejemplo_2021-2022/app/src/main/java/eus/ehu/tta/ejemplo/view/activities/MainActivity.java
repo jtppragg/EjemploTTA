@@ -3,26 +3,27 @@ package eus.ehu.tta.ejemplo.view.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.model.Locator;
+import eus.ehu.tta.ejemplo.model.beans.UserProfile;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -47,15 +48,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        Locator.getBackend().getUserProfile().observe(this, user -> {
-            View headerView = navigationView.getHeaderView(0);
-            ((TextView)headerView.findViewById(R.id.userName)).setText(user.getName());
-            if( user.getPictureUrl() != null ) {
-                Uri uri = Uri.parse(user.getPictureUrl());
-                Glide.with(this).load(uri).into((ImageView) headerView.findViewById(R.id.avatar));
-            }
-            ((TextView)headerView.findViewById(R.id.userStatus)).setText(getString(R.string.lesson) + ": " + user.getCurrentLesson());
-        });
+        UserProfile user = Locator.getBackend().getUserProfile();
+        View headerView = navigationView.getHeaderView(0);
+        ((TextView)headerView.findViewById(R.id.userName)).setText(user.getName());
+        if( user.getPictureUrl() != null ) {
+            Uri uri = Uri.parse(user.getPictureUrl());
+            Glide.with(this).load(uri).into((ImageView) headerView.findViewById(R.id.avatar));
+        }
     }
 
     @Override

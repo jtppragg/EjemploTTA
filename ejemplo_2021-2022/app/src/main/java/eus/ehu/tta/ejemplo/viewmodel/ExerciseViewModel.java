@@ -6,7 +6,6 @@ import android.provider.OpenableColumns;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,27 +18,20 @@ import eus.ehu.tta.ejemplo.model.beans.Exercise;
 
 public class ExerciseViewModel extends BaseViewModel {
     private final Backend backend = Locator.getBackend();
-    private final LiveData<Exercise> liveExercise;
+    private final MutableLiveData<Exercise> liveExercise = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveSent = new MutableLiveData<>();
     private boolean skipNotification;
 
     public ExerciseViewModel() {
-        liveExercise = Transformations.switchMap(
-            backend.getUserProfile(),
-            user -> {
-                MutableLiveData<Exercise> result = new MutableLiveData<>();
-                startLoad();
-                backend.getExercise().handle((exer, excep) -> {
-                    endLoad();
-                    if( excep != null )
-                        excep.printStackTrace();
-                    else
-                        result.setValue(exer);
-                    return exer;
-                });
-                return result;
-            }
-        );
+        startLoad();
+        backend.getExercise().handle((exer, excep) -> {
+            endLoad();
+            if( excep != null )
+                excep.printStackTrace();
+            else
+                liveExercise.setValue(exer);
+            return exer;
+        });
     }
 
     public void sendResponse(Uri uri) {
