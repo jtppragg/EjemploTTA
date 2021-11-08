@@ -3,7 +3,6 @@ package eus.ehu.tta.ejemplo.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
 import eus.ehu.tta.ejemplo.model.Locator;
 import eus.ehu.tta.ejemplo.model.backend.Backend;
@@ -16,6 +15,7 @@ public class TestViewModel extends BaseViewModel {
     private final LiveData<Test> liveTest;
     private final MutableLiveData<Boolean> liveSent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveFinished = new MutableLiveData<>();
+    private boolean skipNotification, skipAdvise;
 
     public TestViewModel() {
         liveTest = Transformations.switchMap(
@@ -44,6 +44,8 @@ public class TestViewModel extends BaseViewModel {
 
     public void send() {
         Choice choice = getChoice();
+        if( choice == null )
+            return;
         startLoad();
         backend.uploadChoice(choice.getId()).handle((aVoid, ex) -> {
            endLoad();
@@ -82,5 +84,21 @@ public class TestViewModel extends BaseViewModel {
 
     public LiveData<Boolean> getFinished() {
         return liveFinished;
+    }
+
+    public boolean isSkipNotification() {
+        return skipNotification;
+    }
+
+    public void setSkipNotification(boolean skipNotification) {
+        this.skipNotification = skipNotification;
+    }
+
+    public boolean isSkipAdvise() {
+        return skipAdvise;
+    }
+
+    public void setSkipAdvise(boolean skipAdvise) {
+        this.skipAdvise = skipAdvise;
     }
 }

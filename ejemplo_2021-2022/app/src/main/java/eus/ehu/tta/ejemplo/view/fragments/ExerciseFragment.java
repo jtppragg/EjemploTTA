@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -24,13 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.view.activities.ActivityFutureLauncher;
 import eus.ehu.tta.ejemplo.viewmodel.ExerciseViewModel;
-import java9.util.concurrent.CompletionException;
 
 public class ExerciseFragment extends BaseFragment {
     private ExerciseViewModel viewModel;
@@ -57,11 +52,20 @@ public class ExerciseFragment extends BaseFragment {
         view.findViewById(R.id.button_take_picture).setOnClickListener(button -> sendPicture());
         view.findViewById(R.id.button_record_audio).setOnClickListener(button -> recordAudio());
         view.findViewById(R.id.button_record_video).setOnClickListener(button -> recordVideo());
+
+        viewModel.getSent().observe(getViewLifecycleOwner(), ok -> {
+            if( viewModel.isSkipNotification() )
+                return;
+            Toast.makeText(getContext(), getString(ok ? R.string.uploaded_ok : R.string.uploaded_ko), Toast.LENGTH_SHORT).show();
+            viewModel.setSkipNotification(true);
+        });
+
         return view;
     }
 
-    private void sendFile(Uri result) {
-        Toast.makeText(getContext(), result.toString(), Toast.LENGTH_SHORT).show();
+    private void sendFile(Uri uri) {
+        viewModel.setSkipNotification(false);
+        viewModel.sendResponse(uri);
     }
 
     private void sendPicture() {

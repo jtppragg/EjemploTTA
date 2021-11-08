@@ -17,7 +17,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
@@ -36,7 +35,6 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     private RadioGroup radioGroup;
     private Button buttonSend, buttonAdvise;
     private AudioPlayer audioPlayer;
-    private boolean skipNotification = true, skipAdvise = true;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -58,9 +56,10 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         viewModel.getSent().observe(getViewLifecycleOwner(), correct -> {
             showSolution();
             buttonSend.setEnabled(false);
-            if( !skipNotification)
+            if( !viewModel.isSkipNotification()) {
                 Toast.makeText(getContext(), correct ? R.string.correct : R.string.incorrect, Toast.LENGTH_SHORT).show();
-            if( !correct )
+                viewModel.setSkipNotification(true);
+            } if( !correct )
                 buttonAdvise.setVisibility(View.VISIBLE);
         });
         viewModel.getFinished().observe(getViewLifecycleOwner(), aBoolean -> {
@@ -117,7 +116,7 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void advise() {
-        skipAdvise = false;
+        viewModel.setSkipAdvise(false);
         viewModel.finish();
     }
 
@@ -133,13 +132,13 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void send() {
-        skipNotification = false;
+        viewModel.setSkipNotification(false);
         viewModel.send();
     }
 
     private void showHtml( String advise ) {
         if( advise.substring(0,10).contains("://") ) {
-            if( !skipAdvise) {
+            if( !viewModel.isSkipAdvise()) {
                 Uri uri = Uri.parse(advise);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
