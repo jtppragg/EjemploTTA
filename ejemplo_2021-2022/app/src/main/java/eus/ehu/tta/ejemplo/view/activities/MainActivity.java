@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout(View view) {
+        Locator.getBackend().logout();
         AuthUI.getInstance()
             .signOut(this)
             .addOnCompleteListener(task -> {

@@ -14,7 +14,7 @@ public class MockBackend implements Backend {
     @Override
     public CompletableFuture<UserProfile> login() {
         user = new UserProfile();
-        user.setId(1);
+        user.setId("1");
         user.setName("John Doe");
         user.setCurrentLesson(1);
         user.setLessonTitle("Introducción");
