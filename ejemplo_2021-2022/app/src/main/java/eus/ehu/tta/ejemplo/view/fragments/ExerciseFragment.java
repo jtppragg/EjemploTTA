@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.view.activities.ActivityFutureLauncher;
@@ -43,17 +46,31 @@ public class ExerciseFragment extends BaseFragment {
         onCreatedViewmodel(viewModel);
 
         View view = inflater.inflate(R.layout.fragment_exercise, container, false);
+
+        Button buttonFile = view.findViewById(R.id.button_send_file);
+        Button buttonPicture = view.findViewById(R.id.button_take_picture);
+        Button buttonAudio = view.findViewById(R.id.button_record_audio);
+        Button buttonVideo = view.findViewById(R.id.button_record_video);
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(buttonFile);
+        buttons.add(buttonPicture);
+        buttons.add(buttonAudio);
+        buttons.add(buttonVideo);
+
         viewModel.getExercise().observe(getViewLifecycleOwner(), exercise -> {
             ((TextView)view.findViewById(R.id.exercise_wording)).setText(exercise.getWording());
+            enableButtons(buttons, true);
         });
-        view.findViewById(R.id.button_send_file).setOnClickListener( button ->
+
+        buttonFile.setOnClickListener( button ->
             launcherFile.launch("*/*").thenAccept(uri -> sendFile(uri))
         );
-        view.findViewById(R.id.button_take_picture).setOnClickListener(button -> sendPicture());
-        view.findViewById(R.id.button_record_audio).setOnClickListener(button -> recordAudio());
-        view.findViewById(R.id.button_record_video).setOnClickListener(button -> recordVideo());
+        buttonPicture.setOnClickListener(button -> sendPicture());
+        buttonAudio.setOnClickListener(button -> recordAudio());
+        buttonVideo.setOnClickListener(button -> recordVideo());
 
         viewModel.getSent().observe(getViewLifecycleOwner(), ok -> {
+            enableButtons(buttons, !ok);
             if( viewModel.isSkipNotification() )
                 return;
             Toast.makeText(getContext(), getString(ok ? R.string.uploaded_ok : R.string.uploaded_ko), Toast.LENGTH_SHORT).show();
@@ -61,6 +78,11 @@ public class ExerciseFragment extends BaseFragment {
         });
 
         return view;
+    }
+
+    private void enableButtons(List<Button> buttons, boolean enabled) {
+        for( Button b : buttons )
+            b.setEnabled(enabled);
     }
 
     private void sendFile(Uri uri) {
