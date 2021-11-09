@@ -21,16 +21,22 @@ public class FirebaseBackend implements Backend {
     private StorageReference storage;
     private UserProfile userProfile;
 
-    private DatabaseReference getDb() {
+    private DatabaseReference dbRef(Object... nodes) {
         if( db == null )
             db = FirebaseDatabase.getInstance().getReference();
-        return db;
+        DatabaseReference child = db;
+        for( Object node : nodes )
+            child = child.child(node.toString());
+        return child;
     }
 
-    private StorageReference getStorage() {
+    private StorageReference storageRef(Object... nodes) {
         if( storage == null )
             storage = FirebaseStorage.getInstance().getReference();
-        return storage;
+        StorageReference child = storage;
+        for( Object node : nodes )
+            child = child.child(node.toString());
+        return child;
     }
 
     private CompletableFuture<DataSnapshot> getFuture(Query query) {
@@ -75,19 +81,19 @@ public class FirebaseBackend implements Backend {
         userProfile.setId(user.getUid());
         userProfile.setName(user.getDisplayName());
         userProfile.setPictureUrl(user.getPhotoUrl().toString());
-        return getFuture(getDb().child("users").child(user.getUid())).thenApply(data -> {
+        return getFuture(dbRef("users", user.getUid())).thenApply(data -> {
             userProfile.setCurrentLesson((Integer)data.child("currentLesson").getValue());
             userProfile.setLessonTitle(data.child("lessonTitle").toString());
             userProfile.setCurrentTest((Integer)data.child("currentTest").getValue());
             userProfile.setCurrentExercise((Integer)data.child("currentExercise").getValue());
             return userProfile;
-        }).exceptionallyCompose(throwable -> getFuture(getDb().child("lessons").child("1")).thenApply(lesson -> {
+        }).exceptionallyCompose(throwable -> getFuture(dbRef("lessons", 1)).thenApply(lesson -> {
             userProfile.setCurrentLesson(1);
             userProfile.setLessonTitle(lesson.child("title").getValue().toString());
             userProfile.setCurrentTest(1);
             userProfile.setCurrentExercise(1);
             return null;
-        }).thenCompose(o -> setFuture(getDb().child("users").child(user.getUid()), userProfile)));
+        }).thenCompose(o -> setFuture(dbRef("users", user.getUid()), userProfile)));
     }
 
     @Override
@@ -103,7 +109,7 @@ public class FirebaseBackend implements Backend {
 
     @Override
     public CompletableFuture<Test> getTest() {
-        return getFuture(getDb().child("tests").child(userProfile.getCurrentLesson()+"").child(userProfile.getCurrentTest()+"")).thenApply(data -> {
+        return getFuture(dbRef("tests", userProfile.getCurrentLesson(), userProfile.getCurrentTest())).thenApply(data -> {
             Test test = data.getValue(Test.class);
             test.setId(userProfile.getCurrentTest());
             while( test.getChoices().remove(null) );
@@ -116,7 +122,7 @@ public class FirebaseBackend implements Backend {
 
     @Override
     public CompletableFuture<Exercise> getExercise() {
-        return getFuture(getDb().child("exercises").child(userProfile.getCurrentLesson()+"").child(userProfile.getCurrentExercise()+"")).thenApply( data -> {
+        return getFuture(dbRef("exercises", userProfile.getCurrentLesson(), userProfile.getCurrentExercise())).thenApply(data -> {
             Exercise ex = data.getValue(Exercise.class);
             ex.setId(userProfile.getCurrentExercise());
             return ex;
@@ -125,12 +131,12 @@ public class FirebaseBackend implements Backend {
 
     @Override
     public CompletableFuture<Void> uploadChoice(int choiceId) {
-        return setFuture(getDb().child("testAnswers").child(userProfile.getId()).child(userProfile.getCurrentLesson()+"").child(userProfile.getCurrentTest()+""), choiceId)
+        return setFuture(dbRef("testAnswers", userProfile.getId(), userProfile.getCurrentLesson(), userProfile.getCurrentTest()), choiceId)
             .thenRun(() -> {});
     }
 
     @Override
     public CompletableFuture<Void> uploadExercise(InputStream is, String name) {
-        return uploadFuture(getStorage().child("exerciseAnswers").child(userProfile.getId()).child(userProfile.getCurrentLesson()+"").child(userProfile.getCurrentExercise()+"").child(name), is);
+        return uploadFuture(storageRef("exerciseAnswers", userProfile.getId(), userProfile.getCurrentLesson(), userProfile.getCurrentExercise(), name), is);
     }
 }
