@@ -2,6 +2,7 @@ package eus.ehu.tta.ejemplo.view.fragments;
 
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
@@ -21,9 +22,10 @@ public abstract class BaseFragment extends Fragment {
         new ActivityResultContracts.RequestPermission());
 
     protected void onCreatedViewmodel(BaseViewModel viewModel) {
-        viewModel.getLoading().observe(getViewLifecycleOwner(), loading ->
-            getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE.equals(loading))
-        );
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            View view = getActivity().findViewById(R.id.progress_spinner);
+            view.setVisibility(Boolean.TRUE.equals(loading) ? View.VISIBLE : View.GONE);
+        });
     }
 
     public final <I,O> ActivityFutureLauncher<I,O> registerForActivityFuture(

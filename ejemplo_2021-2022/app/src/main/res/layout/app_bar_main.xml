@@ -18,6 +18,16 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.EjemploTTA.PopupOverlay" />
 
+        <ProgressBar
+            android:id="@+id/progress_spinner"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-8dp"
+            android:layout_marginBottom="-8dp"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_main" />
