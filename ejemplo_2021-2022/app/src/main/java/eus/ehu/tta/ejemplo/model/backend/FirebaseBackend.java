@@ -3,11 +3,6 @@ package eus.ehu.tta.ejemplo.model.backend;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
@@ -15,103 +10,51 @@ import eus.ehu.tta.ejemplo.model.beans.Exercise;
 import eus.ehu.tta.ejemplo.model.beans.Test;
 import eus.ehu.tta.ejemplo.model.beans.UserProfile;
 import java9.util.concurrent.CompletableFuture;
+import java9.util.concurrent.CompletionException;
 
-public class FirebaseBackend implements Backend {
-    private DatabaseReference db;
-    private StorageReference storage;
-    private UserProfile userProfile;
-
-    private DatabaseReference dbRef(Object... nodes) {
-        if( db == null )
-            db = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference child = db;
-        for( Object node : nodes )
-            child = child.child(node.toString());
-        return child;
-    }
-
-    private StorageReference storageRef(Object... nodes) {
-        if( storage == null )
-            storage = FirebaseStorage.getInstance().getReference();
-        StorageReference child = storage;
-        for( Object node : nodes )
-            child = child.child(node.toString());
-        return child;
-    }
-
-    private CompletableFuture<DataSnapshot> getFuture(Query query) {
-        CompletableFuture<DataSnapshot> result = new CompletableFuture<>();
-        query.get().addOnCompleteListener(task -> {
-            if( !task.isSuccessful() )
-                result.completeExceptionally(task.getException());
-            else
-                result.complete(task.getResult());
-        });
-        return result;
-    }
-
-    private <T> CompletableFuture<T> setFuture(DatabaseReference ref, T value) {
-        CompletableFuture<T> result = new CompletableFuture<>();
-        ref.setValue(value).addOnCompleteListener(task -> {
-            if( !task.isSuccessful() )
-                result.completeExceptionally(task.getException());
-            else
-                result.complete(value);
-        });
-        return result;
-    }
-
-    private CompletableFuture<Void> uploadFuture(StorageReference ref, InputStream is) {
-        CompletableFuture<Void> result = new CompletableFuture<>();
-        ref.putStream(is).addOnCompleteListener(task -> {
-            if( !task.isSuccessful() )
-                result.completeExceptionally(task.getException());
-            else
-                result.complete(null);
-        });
-        return result;
-    }
+public class FirebaseBackend extends FirebaseHelper implements Backend {
+    private UserProfile user;
 
     @Override
     public CompletableFuture<UserProfile> login() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if( user == null )
+        FirebaseUser fireUser = FirebaseAuth.getInstance().getCurrentUser();
+        if( fireUser == null )
             return CompletableFuture.failedFuture(new Exception("Not logged"));
-        userProfile = new UserProfile();
-        userProfile.setId(user.getUid());
-        userProfile.setName(user.getDisplayName());
-        userProfile.setPictureUrl(user.getPhotoUrl().toString());
-        return getFuture(dbRef("users", user.getUid())).thenApply(data -> {
-            userProfile.setCurrentLesson((Integer)data.child("currentLesson").getValue());
-            userProfile.setLessonTitle(data.child("lessonTitle").toString());
-            userProfile.setCurrentTest((Integer)data.child("currentTest").getValue());
-            userProfile.setCurrentExercise((Integer)data.child("currentExercise").getValue());
-            return userProfile;
+        user = new UserProfile();
+        user.setId(fireUser.getUid());
+        user.setName(fireUser.getDisplayName());
+        user.setPictureUrl(fireUser.getPhotoUrl().toString());
+        return getFuture(dbRef("users", fireUser.getUid())).thenApply(data -> {
+            user.setCurrentLesson((Integer)data.child("currentLesson").getValue());
+            user.setLessonTitle(data.child("lessonTitle").toString());
+            user.setCurrentTest((Integer)data.child("currentTest").getValue());
+            user.setCurrentExercise((Integer)data.child("currentExercise").getValue());
+            return user;
         }).exceptionallyCompose(throwable -> getFuture(dbRef("lessons", 1)).thenApply(lesson -> {
-            userProfile.setCurrentLesson(1);
-            userProfile.setLessonTitle(lesson.child("title").getValue().toString());
-            userProfile.setCurrentTest(1);
-            userProfile.setCurrentExercise(1);
+            user.setCurrentLesson(1);
+            user.setLessonTitle(lesson.child("title").getValue().toString());
+            user.setCurrentTest(1);
+            user.setCurrentExercise(1);
             return null;
-        }).thenCompose(o -> setFuture(dbRef("users", user.getUid()), userProfile)));
+        }).thenCompose(o -> setFuture(dbRef("users", fireUser.getUid()), user)));
     }
 
     @Override
     public CompletableFuture<Void> logout() {
-        userProfile = null;
+        user = null;
         return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public UserProfile getUserProfile() {
-        return userProfile;
+        return user;
     }
 
     @Override
     public CompletableFuture<Test> getTest() {
-        return getFuture(dbRef("tests", userProfile.getCurrentLesson(), userProfile.getCurrentTest())).thenApply(data -> {
+        return getFuture(dbRef("tests", user.getCurrentLesson(), user.getCurrentTest())).thenApply(data -> {
             Test test = data.getValue(Test.class);
-            test.setId(userProfile.getCurrentTest());
+            test.setId(user.getCurrentTest());
             while( test.getChoices().remove(null) );
             int i = 0;
             for(DataSnapshot choice : data.child("choices").getChildren())
@@ -122,21 +65,42 @@ public class FirebaseBackend implements Backend {
 
     @Override
     public CompletableFuture<Exercise> getExercise() {
-        return getFuture(dbRef("exercises", userProfile.getCurrentLesson(), userProfile.getCurrentExercise())).thenApply(data -> {
+        return getFuture(dbRef("exercises", user.getCurrentLesson(), user.getCurrentExercise())).thenApply(data -> {
             Exercise ex = data.getValue(Exercise.class);
-            ex.setId(userProfile.getCurrentExercise());
+            ex.setId(user.getCurrentExercise());
             return ex;
         });
     }
 
     @Override
     public CompletableFuture<Void> uploadChoice(int choiceId) {
-        return setFuture(dbRef("testAnswers", userProfile.getId(), userProfile.getCurrentLesson(), userProfile.getCurrentTest()), choiceId)
-            .thenRun(() -> {});
+        return setFuture(dbRef("testAnswers", user.getId(), user.getCurrentLesson(), user.getCurrentTest()), choiceId)
+            .thenCompose(data -> getFuture(dbRef("tests", user.getCurrentLesson(), user.getCurrentTest(), "choices", choiceId, "correct")))
+            .thenCompose(data -> {
+                if( !data.getValue(Boolean.class) ) // Incorrect
+                    gotoFuture();
+                return getFuture(dbRef("tests", user.getCurrentLesson()).limitToLast(1));
+            }).thenCompose(data -> {
+                int lastTest = Integer.parseInt(data.getChildren().iterator().next().getKey());
+                int nextTest = user.getCurrentTest() < lastTest ? user.getCurrentTest()+1 : 1;
+                user.setCurrentTest(nextTest);
+                return setFuture(dbRef("users", user.getId(), "currentTest"), nextTest);
+            }).handle((data, ex) -> {
+                if( ex == null || ex.getCause() instanceof JumpFutureException)
+                    return null;
+                throw new CompletionException(ex);
+            });
     }
 
     @Override
     public CompletableFuture<Void> uploadExercise(InputStream is, String name) {
-        return uploadFuture(storageRef("exerciseAnswers", userProfile.getId(), userProfile.getCurrentLesson(), userProfile.getCurrentExercise(), name), is);
+        return uploadFuture(storageRef("exerciseAnswers", user.getId(), user.getCurrentLesson(), user.getCurrentExercise(), name), is)
+            .thenCompose(data -> getFuture(dbRef("exercises", user.getCurrentLesson()).limitToLast(1)))
+            .thenCompose(data -> {
+                int lastExercise = Integer.parseInt(data.getChildren().iterator().next().getKey());
+                int nextExercise = user.getCurrentExercise() < lastExercise ? user.getCurrentExercise()+1 : 1;
+                user.setCurrentExercise(nextExercise);
+                return setFuture(dbRef("users", user.getId(), "currentExercise"), nextExercise);
+            }).thenRun(() -> {});
     }
 }
