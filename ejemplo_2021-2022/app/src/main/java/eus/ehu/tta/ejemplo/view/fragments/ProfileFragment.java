@@ -25,7 +25,10 @@ public class ProfileFragment extends BaseFragment {
             Uri uri = Uri.parse(user.getPictureUrl());
             Glide.with(this).load(uri).into((ImageView)view.findViewById(R.id.avatar));
         }
-        ((TextView)view.findViewById(R.id.userStatus)).setText(getString(R.string.lesson) + ": " + user.getCurrentLesson());
+        ((TextView)view.findViewById(R.id.currentTest))
+            .setText(getString(R.string.test) + ": " + user.getCurrentTest());
+        ((TextView)view.findViewById(R.id.currentExercise))
+            .setText(getString(R.string.exercise) + ": " + user.getCurrentExercise());
         return view;
     }
 }

@@ -23,7 +23,8 @@ public class FirebaseBackend extends FirebaseHelper implements Backend {
         user = new UserProfile();
         user.setId(fireUser.getUid());
         user.setName(fireUser.getDisplayName());
-        user.setPictureUrl(fireUser.getPhotoUrl().toString());
+        if( fireUser.getPhotoUrl() != null )
+            user.setPictureUrl(fireUser.getPhotoUrl().toString());
         return getFuture(dbRef("users", fireUser.getUid())).thenApply(data -> {
             user.setCurrentLesson((Integer)data.child("currentLesson").getValue());
             user.setLessonTitle(data.child("lessonTitle").toString());

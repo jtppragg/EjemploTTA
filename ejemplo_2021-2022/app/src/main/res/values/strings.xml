@@ -31,4 +31,6 @@
     <string name="no_micro">Tu móvil no dispone de micrófono</string>
     <string name="uploaded_ok">Ejercicio entregado correctamente</string>
     <string name="uploaded_ko">Error al entregar el ejercicio</string>
+    <string name="test">Test</string>
+    <string name="exercise">Ejercicio</string>
 </resources>

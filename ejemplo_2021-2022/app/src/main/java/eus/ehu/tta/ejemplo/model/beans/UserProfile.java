@@ -7,7 +7,7 @@ public class UserProfile {
     private String lessonTitle;
     private int currentTest;
     private int currentExercise;
-    private String pictureUrl;
+    private String pictureUrl = "https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png";
 
     public String getId() {
         return id;
