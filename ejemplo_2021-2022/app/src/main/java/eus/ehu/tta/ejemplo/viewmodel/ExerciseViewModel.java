@@ -21,6 +21,7 @@ public class ExerciseViewModel extends BaseViewModel {
     private final MutableLiveData<Exercise> liveExercise = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveSent = new MutableLiveData<>();
     private boolean skipNotification;
+    private Uri uri;
 
     public ExerciseViewModel() {
         startLoad();
@@ -83,5 +84,13 @@ public class ExerciseViewModel extends BaseViewModel {
 
     public void setSkipNotification(boolean skipNotification) {
         this.skipNotification = skipNotification;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
     }
 }

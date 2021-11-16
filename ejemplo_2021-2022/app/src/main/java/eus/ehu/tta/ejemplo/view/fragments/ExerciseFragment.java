@@ -3,7 +3,6 @@ package eus.ehu.tta.ejemplo.view.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -27,19 +26,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eus.ehu.tta.ejemplo.R;
-import eus.ehu.tta.ejemplo.view.activities.ActivityFutureLauncher;
 import eus.ehu.tta.ejemplo.viewmodel.ExerciseViewModel;
 
 public class ExerciseFragment extends BaseFragment {
     private ExerciseViewModel viewModel;
-    private final ActivityFutureLauncher<String,Uri> launcherFile = registerForActivityFuture(
-        new ActivityResultContracts.GetContent());
-    private final ActivityFutureLauncher<Uri, Boolean> launcherPicture = registerForActivityFuture(
-        new ActivityResultContracts.TakePicture());
-    private final ActivityFutureLauncher<Intent, ActivityResult> launcherAudio = registerForActivityFuture(
-        new ActivityResultContracts.StartActivityForResult());
-    private final ActivityFutureLauncher<Uri, Bitmap> launcherVideo = registerForActivityFuture(
-        new ActivityResultContracts.TakeVideo());
+    private final ActivityResultLauncher<String> launcherFile = registerForActivityResult(
+        new ActivityResultContracts.GetContent(), this::sendFile );
+    private final ActivityResultLauncher<String> launcherPicturePerm = registerForActivityResult(
+        new ActivityResultContracts.RequestPermission(),
+        granted -> {if(granted) launchPicture();} );
+    private final ActivityResultLauncher<Uri> launcherPicture = registerForActivityResult(
+        new ActivityResultContracts.TakePicture(),
+        ok -> {if(ok) sendFile(viewModel.getUri());} );
+    private final ActivityResultLauncher<Intent> launcherAudio = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> sendFile(result.getData().getData()));
+    private final ActivityResultLauncher<String> launcherVideoPerm = registerForActivityResult(
+        new ActivityResultContracts.RequestPermission(),
+        granted -> {if(granted) launchVideo();} );
+    private final ActivityResultLauncher<Uri> launcherVideo = registerForActivityResult(
+        new ActivityResultContracts.TakeVideo(),
+        bitmap -> sendFile(viewModel.getUri()));
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
@@ -62,12 +69,10 @@ public class ExerciseFragment extends BaseFragment {
             enableButtons(buttons, true);
         });
 
-        buttonFile.setOnClickListener( button ->
-            launcherFile.launch("*/*").thenAccept(uri -> sendFile(uri))
-        );
-        buttonPicture.setOnClickListener(button -> sendPicture());
-        buttonAudio.setOnClickListener(button -> recordAudio());
-        buttonVideo.setOnClickListener(button -> recordVideo());
+        buttonFile.setOnClickListener( button -> launcherFile.launch("*/*") );
+        buttonPicture.setOnClickListener(button -> onPicture());
+        buttonAudio.setOnClickListener(button -> onAudio());
+        buttonVideo.setOnClickListener(button -> onVideo());
 
         viewModel.getSent().observe(getViewLifecycleOwner(), ok -> {
             enableButtons(buttons, !ok);
@@ -90,30 +95,33 @@ public class ExerciseFragment extends BaseFragment {
         viewModel.sendResponse(uri);
     }
 
-    private void sendPicture() {
+    private void onPicture() {
         if( !getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ) {
             Toast.makeText(getContext(), R.string.no_camera, Toast.LENGTH_SHORT).show();
             return;
         }
-        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
-            if( !granted )
-                return;
-            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            try {
-                File file = File.createTempFile("tta", ".jpg", dir);
-                //pictureUri = Uri.fromFile(file);
-                Uri uri = FileProvider.getUriForFile(getContext(),getContext().getApplicationContext().getPackageName() + ".fileprovider", file);
-                launcherPicture.launch(uri).thenAccept(ok -> {
-                   if( ok )
-                       sendFile(uri);
-                });
-            } catch( IOException e ) {
-                e.printStackTrace();
-            }
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
+           if( granted )
+               launchPicture();
+           else
+               launcherPicturePerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         });
     }
 
-    private void recordAudio() {
+    private void launchPicture() {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        try {
+            File file = File.createTempFile("tta", ".jpg", dir);
+            //pictureUri = Uri.fromFile(file);
+            Uri uri = FileProvider.getUriForFile(getContext(),getContext().getApplicationContext().getPackageName() + ".fileprovider", file);
+            viewModel.setUri(uri);
+            launcherPicture.launch(uri);
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onAudio() {
         if( !getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE) ) {
             Toast.makeText(getContext(), R.string.no_micro, Toast.LENGTH_SHORT).show();
             return;
@@ -123,25 +131,31 @@ public class ExerciseFragment extends BaseFragment {
             Toast.makeText(getContext(), R.string.no_app, Toast.LENGTH_SHORT).show();
             return;
         }
-        launcherAudio.launch(intent).thenAccept(result -> sendFile(result.getData().getData()));
+        launcherAudio.launch(intent);
     }
 
-    private void recordVideo() {
+    private void onVideo() {
         if( !getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ) {
             Toast.makeText(getContext(), R.string.no_camera, Toast.LENGTH_SHORT).show();
             return;
         }
-        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
-            if( !granted )
-                return;
-            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-            try {
-                File file = File.createTempFile("tta", ".mp4", dir);
-                Uri uri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".fileprovider", file);
-                launcherVideo.launch(uri).thenAccept(bitmap -> sendFile(uri));
-            } catch( IOException e ) {
-                e.printStackTrace();
-            }
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
+            if( granted )
+                launchVideo();
+            else
+                launcherVideoPerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         });
+    }
+
+    private void launchVideo() {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        try {
+            File file = File.createTempFile("tta", ".mp4", dir);
+            Uri uri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".fileprovider", file);
+            viewModel.setUri(uri);
+            launcherVideo.launch(uri);
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
     }
 }
