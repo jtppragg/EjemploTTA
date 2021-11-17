@@ -18,13 +18,9 @@ public class TestViewModel extends BaseViewModel {
 
     public TestViewModel() {
         startLoad();
-        backend.getTest().handle((test, ex) -> {
+        backend.getTest().addOnCompleteListener(task -> {
             endLoad();
-            if( ex != null )
-                ex.printStackTrace();
-            else
-                liveTest.setValue(test);
-            return test;
+            liveTest.setValue(task.getResult());
         });
     }
 
@@ -39,13 +35,10 @@ public class TestViewModel extends BaseViewModel {
         if( choice == null )
             return;
         startLoad();
-        backend.uploadChoice(choice.getId()).handle((aVoid, ex) -> {
+        backend.uploadChoice(choice.getId()).addOnCompleteListener(task -> {
            endLoad();
-           if( ex == null )
+           if( task.isSuccessful() )
                liveSent.setValue(choice.isCorrect());
-           else
-               ex.printStackTrace();
-           return null;
         });
     }
 

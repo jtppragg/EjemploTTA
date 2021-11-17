@@ -25,13 +25,9 @@ public class ExerciseViewModel extends BaseViewModel {
 
     public ExerciseViewModel() {
         startLoad();
-        backend.getExercise().handle((exer, excep) -> {
+        backend.getExercise().addOnCompleteListener(task -> {
             endLoad();
-            if( excep != null )
-                excep.printStackTrace();
-            else
-                liveExercise.setValue(exer);
-            return exer;
+            liveExercise.setValue(task.getResult());
         });
     }
 
@@ -42,15 +38,14 @@ public class ExerciseViewModel extends BaseViewModel {
             InputStream is = EjemploTTA.getContext().getContentResolver().openInputStream(uri);
             String name = resolveName(uri);
             startLoad();
-            backend.uploadExercise(is, name).handle((aVoid, ex) -> {
+            backend.uploadExercise(is, name).addOnCompleteListener(task -> {
                 endLoad();
                 try {
                     is.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                liveSent.setValue(ex == null);
-                return null;
+                liveSent.setValue(task.isSuccessful());
             });
         } catch (FileNotFoundException e) {
             e.printStackTrace();

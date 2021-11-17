@@ -1,18 +1,20 @@
 package eus.ehu.tta.ejemplo.model.backend;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
 import java.io.InputStream;
 
 import eus.ehu.tta.ejemplo.model.beans.Choice;
 import eus.ehu.tta.ejemplo.model.beans.Exercise;
 import eus.ehu.tta.ejemplo.model.beans.Test;
 import eus.ehu.tta.ejemplo.model.beans.UserProfile;
-import java9.util.concurrent.CompletableFuture;
 
 public class MockBackend implements Backend {
     private UserProfile user;
 
     @Override
-    public CompletableFuture<UserProfile> login() {
+    public Task<UserProfile> login() {
         user = new UserProfile();
         user.setId("1");
         user.setName("John Doe");
@@ -21,13 +23,13 @@ public class MockBackend implements Backend {
         user.setCurrentTest(1);
         user.setCurrentExercise(1);
         user.setPictureUrl("https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png");
-        return CompletableFuture.completedFuture(user);
+        return Tasks.forResult(user);
     }
 
     @Override
-    public CompletableFuture<Void> logout() {
+    public Task<Void> logout() {
         user = null;
-        return CompletableFuture.completedFuture(null);
+        return Tasks.forResult(null);
     }
 
     @Override
@@ -36,7 +38,7 @@ public class MockBackend implements Backend {
     }
 
     @Override
-    public CompletableFuture<Test> getTest() {
+    public Task<Test> getTest() {
         Test test = new Test();
         test.setId(user.getCurrentTest());
         if( test.getId() == 1 ) {
@@ -57,40 +59,40 @@ public class MockBackend implements Backend {
             addChoice(test, "LiveData", "text/html", "LiveData implementa el patrón observer en MVVM");
             addChoice(test, "Llamadas bloqueantes", null, null);
         }
-        return CompletableFuture.completedFuture(test);
+        return Tasks.forResult(test);
     }
 
     @Override
-    public CompletableFuture<Exercise> getExercise() {
+    public Task<Exercise> getExercise() {
         Exercise ex = new Exercise();
         ex.setId(user.getCurrentExercise());
         if( ex.getId() == 1 )
             ex.setWording("Explica cómo aplicarías el patrón de diseño MVVM en el desarrollo de una app para Android");
         else
             ex.setWording("Explica una opción para gestionar llamadas asíncronas en Android");
-        return CompletableFuture.completedFuture(ex);
+        return Tasks.forResult(ex);
     }
 
     @Override
-    public CompletableFuture<Void> uploadChoice(int choiceId) {
+    public Task<Void> uploadChoice(int choiceId) {
         int nextTest = user.getCurrentTest() + 1;
         if( nextTest > 2 ) {
             nextTest = 1;
             user.setCurrentLesson(user.getCurrentLesson()+1);
         }
         user.setCurrentTest(nextTest);
-        return CompletableFuture.completedFuture(null);
+        return Tasks.forResult(null);
     }
 
     @Override
-    public CompletableFuture<Void> uploadExercise(InputStream is, String name) {
+    public Task<Void> uploadExercise(InputStream is, String name) {
         int nextExercise = user.getCurrentExercise() + 1;
         if( nextExercise > 2 ) {
             nextExercise = 1;
             user.setCurrentLesson(user.getCurrentLesson()+1);
         }
         user.setCurrentExercise(nextExercise);
-        return CompletableFuture.completedFuture(null);
+        return Tasks.forResult(null);
     }
 
     private static void addChoice(Test test, String wording, String mime, String advise) {

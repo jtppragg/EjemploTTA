@@ -8,9 +8,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
+
 import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.viewmodel.BaseViewModel;
-import java9.util.concurrent.CompletableFuture;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -21,20 +24,20 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
-    public CompletableFuture<Boolean> checkPermission(String perm, String rationale) {
+    public Task<Boolean> checkPermission(String perm, String rationale) {
         if( ContextCompat.checkSelfPermission(getContext(), perm) == PackageManager.PERMISSION_GRANTED)
-            return CompletableFuture.completedFuture(true);
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
+            return Tasks.forResult(true);
+        TaskCompletionSource<Boolean> task = new TaskCompletionSource<>();
         if( ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), perm) ) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle(R.string.permission_neccesary);
             alert.setMessage(rationale);
             alert.setIcon(android.R.drawable.ic_dialog_info);
-            alert.setPositiveButton(R.string.ok, (dialogInterface, i) -> future.complete(false));
+            alert.setPositiveButton(R.string.ok, (dialogInterface, i) -> task.setResult(false));
             alert.show();
         } else
-            future.complete(false);
-        return future;
+            task.setResult(false);
+        return task.getTask();
     }
 
 }

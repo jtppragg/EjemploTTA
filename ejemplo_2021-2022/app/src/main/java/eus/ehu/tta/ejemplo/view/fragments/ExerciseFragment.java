@@ -100,12 +100,13 @@ public class ExerciseFragment extends BaseFragment {
             Toast.makeText(getContext(), R.string.no_camera, Toast.LENGTH_SHORT).show();
             return;
         }
-        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
-           if( granted )
-               launchPicture();
-           else
-               launcherPicturePerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        });
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale))
+            .addOnSuccessListener(getActivity(), granted -> {
+                if( granted )
+                    launchPicture();
+                else
+                    launcherPicturePerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            });
     }
 
     private void launchPicture() {
@@ -139,12 +140,13 @@ public class ExerciseFragment extends BaseFragment {
             Toast.makeText(getContext(), R.string.no_camera, Toast.LENGTH_SHORT).show();
             return;
         }
-        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale)).thenAccept(granted -> {
-            if( granted )
-                launchVideo();
-            else
-                launcherVideoPerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        });
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.storage_rationale))
+            .addOnSuccessListener(getActivity(), granted -> {
+                if( granted )
+                    launchVideo();
+                else
+                    launcherVideoPerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            });
     }
 
     private void launchVideo() {

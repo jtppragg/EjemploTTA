@@ -2,7 +2,6 @@ package eus.ehu.tta.ejemplo.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Window;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,13 +39,11 @@ public class LoginActivity extends AppCompatActivity {
         if( result.getResultCode() != RESULT_OK )
             finish();
         setProgressBarIndeterminateVisibility(true);
-        Locator.getBackend()
-            .login()
-            .handle((res, ex) -> {
-                if( res != null )
+        Locator.getBackend().login()
+            .addOnCompleteListener(task -> {
+                if( task.isSuccessful() )
                     startActivity(new Intent(this, MainActivity.class));
                 finish();
-                return null;
             });
     }
 
