@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/test_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="es.tta.example.TestActivity">
+
+    <TextView
+        android:id="@+id/test_wording"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RadioGroup
+        android:id="@+id/test_choices"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- Populated programatically -->
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/button_send_test"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send"
+        android:onClick="send"/>
+
+    <Button
+        android:id="@+id/button_view_advise"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_advise"
+        android:onClick="advise"/>
+
+</LinearLayout>
