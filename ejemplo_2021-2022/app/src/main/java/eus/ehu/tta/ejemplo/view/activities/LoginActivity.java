@@ -15,6 +15,7 @@ import java.util.List;
 
 import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.model.Locator;
+import eus.ehu.tta.ejemplo.model.backend.FirebaseBackend;
 
 public class LoginActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
@@ -51,6 +52,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        createSignInIntent();
+        if( Locator.getBackend() instanceof FirebaseBackend )
+            createSignInIntent();
+        else {
+            Locator.getBackend().login();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 }
