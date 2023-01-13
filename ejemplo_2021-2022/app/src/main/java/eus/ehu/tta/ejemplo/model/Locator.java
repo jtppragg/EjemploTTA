@@ -1,7 +1,6 @@
 package eus.ehu.tta.ejemplo.model;
 
 import eus.ehu.tta.ejemplo.model.backend.Backend;
-import eus.ehu.tta.ejemplo.model.backend.FirebaseBackend;
 import eus.ehu.tta.ejemplo.model.backend.MockBackend;
 
 public final class Locator {
