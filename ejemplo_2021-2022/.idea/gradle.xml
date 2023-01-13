@@ -10,8 +10,8 @@
         <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
-            <option value="/home/jtppragg/Development/Android/EjemploTTA/ejemplo_2021-2022" />
-            <option value="/home/jtppragg/Development/Android/EjemploTTA/ejemplo_2021-2022/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>
