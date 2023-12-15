@@ -1,5 +1,7 @@
 package eus.ehu.tta.ejemplo.viewmodel;
 
+import android.net.Uri;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -15,6 +17,8 @@ public class TestViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> liveSent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> liveFinished = new MutableLiveData<>();
     private boolean skipNotification, skipAdvise;
+    private String playerUri;
+    int playerPosition = 0;
 
     public TestViewModel() {
         startLoad();
@@ -85,5 +89,21 @@ public class TestViewModel extends BaseViewModel {
 
     public void setSkipAdvise(boolean skipAdvise) {
         this.skipAdvise = skipAdvise;
+    }
+
+    public String getPlayerUri() {
+        return playerUri;
+    }
+
+    public void setPlayerUri(String playerUri) {
+        this.playerUri = playerUri;
+    }
+
+    public int getPlayerPosition() {
+        return playerPosition;
+    }
+
+    public void setPlayerPosition(int playerPosition) {
+        this.playerPosition = playerPosition;
     }
 }

@@ -2,6 +2,7 @@ package eus.ehu.tta.ejemplo.view.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -18,6 +18,7 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.io.IOException;
 
@@ -25,7 +26,6 @@ import eus.ehu.tta.ejemplo.R;
 import eus.ehu.tta.ejemplo.model.beans.Choice;
 import eus.ehu.tta.ejemplo.model.beans.Test;
 import eus.ehu.tta.ejemplo.view.media.AudioPlayer;
-import eus.ehu.tta.ejemplo.view.media.MyMediaController;
 import eus.ehu.tta.ejemplo.viewmodel.TestViewModel;
 
 public class TestFragment extends BaseFragment implements View.OnClickListener {
@@ -35,6 +35,7 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     private RadioGroup radioGroup;
     private Button buttonSend, buttonAdvise;
     private AudioPlayer audioPlayer;
+    private VideoView videoView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,12 +72,25 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
+        super.onPause();
         if( audioPlayer != null ) {
+            viewModel.setPlayerPosition(audioPlayer.getCurrentPosition());
             audioPlayer.release();
             audioPlayer = null;
+        } else if( videoView != null ) {
+            viewModel.setPlayerPosition(videoView.getCurrentPosition());
+            videoView.stopPlayback();
+            videoView.setMediaController(null);
+            videoView = null;
         }
-        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if( viewModel.getPlayerPosition() != 0 && audioPlayer == null && videoView == null )
+            loadAdvise();
     }
 
     private void loadTest(Test test) {
@@ -125,9 +139,9 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
         String mime = choice.getAdviseType().toLowerCase();
         if( mime.contains("video") )
             showVideo(choice.getAdvise());
-        else if( mime.contains("audio") )
+        else if( mime.contains("audio") ) {
             playAudio(choice.getAdvise());
-        else
+        } else
             showHtml(choice.getAdvise());
     }
 
@@ -154,11 +168,19 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void playAudio(String advise) {
+        TestFragment self = this;
         try {
-            audioPlayer = new AudioPlayer(layout) {
+            audioPlayer = new AudioPlayer(getView()) {
                 @Override
                 public void onBackPressed() {
-                    getActivity().finish();
+                    if( isAdded() )
+                        NavHostFragment.findNavController(self).popBackStack();
+                }
+
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    super.onPrepared(mp);
+                    seekTo(viewModel.getPlayerPosition());
                 }
             };
             audioPlayer.setAudioUri(Uri.parse(advise));
@@ -169,22 +191,12 @@ public class TestFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void showVideo(String advise) {
-        VideoView video = new VideoView(getContext());
-        video.setVideoURI(Uri.parse(advise));
-        //ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        video.setLayoutParams(params);
-
-        MediaController controller = new MyMediaController(getContext()) {
-            @Override
-            public void onBackPressed() {
-                getActivity().finish();
-            }
-        };
-        controller.setAnchorView(video);
-        video.setMediaController(controller);
-
-        layout.addView(video);
-        video.start();
+        videoView = new VideoView(getContext());
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        videoView.setLayoutParams(params);
+        layout.addView(videoView);
+        videoView.setVideoURI(Uri.parse(advise));
+        videoView.seekTo(viewModel.getPlayerPosition());
+        videoView.start();
     }
 }

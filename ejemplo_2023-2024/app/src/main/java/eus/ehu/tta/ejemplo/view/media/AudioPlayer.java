@@ -1,10 +1,8 @@
 package eus.ehu.tta.ejemplo.view.media;
 
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.view.View;
 import android.widget.MediaController;
 
@@ -23,6 +21,7 @@ public class AudioPlayer implements MediaController.MediaPlayerControl, MediaPla
         controller = new MyMediaController(view.getContext()) {
             @Override
             public void onBackPressed() {
+                super.onBackPressed();
                 self.onBackPressed();
             }
         };

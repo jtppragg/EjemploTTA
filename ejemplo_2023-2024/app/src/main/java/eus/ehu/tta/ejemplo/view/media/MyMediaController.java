@@ -15,11 +15,12 @@ public class MyMediaController extends MediaController {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if( event.getKeyCode() == KeyEvent.KEYCODE_BACK )
+        if( event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP)
             onBackPressed();
         return super.dispatchKeyEvent(event);
     }
 
     public void onBackPressed() {
+        super.hide();
     }
 }
