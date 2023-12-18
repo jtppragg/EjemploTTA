@@ -32,7 +32,7 @@ public class ExerciseViewModel extends BaseViewModel {
     }
 
     public void sendResponse(Uri uri) {
-        if( liveExercise.getValue() == null )
+        if( uri == null || liveExercise.getValue() == null )
             return;
         try {
             InputStream is = EjemploTTA.getContext().getContentResolver().openInputStream(uri);

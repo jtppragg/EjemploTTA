@@ -40,13 +40,16 @@ public class ExerciseFragment extends BaseFragment {
         ok -> {if(ok) sendFile(viewModel.getUri());} );
     private final ActivityResultLauncher<Intent> launcherAudio = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        result -> sendFile(result.getData().getData()));
+        result -> {
+            if( result.getData() != null)
+                sendFile(result.getData().getData());
+        });
     private final ActivityResultLauncher<String> launcherVideoPerm = registerForActivityResult(
         new ActivityResultContracts.RequestPermission(),
         granted -> {if(granted) launchVideo();} );
     private final ActivityResultLauncher<Uri> launcherVideo = registerForActivityResult(
-        new ActivityResultContracts.TakeVideo(),
-        bitmap -> sendFile(viewModel.getUri()));
+        new ActivityResultContracts.CaptureVideo(),
+        ok -> {if(ok) sendFile(viewModel.getUri());});
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(this).get(ExerciseViewModel.class);
