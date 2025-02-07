@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Ejemplo TTA</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Inicio</string>
+    <string name="lesson">Lección</string>
+    <string name="button_test">Nuevo test</string>
+    <string name="button_exercise">Nuevo ejercicio</string>
+    <string name="button_profile">Seguimiento</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="button_send">Enviar</string>
+    <string name="button_advise">Ver ayuda</string>
+    <string name="incorrect">¡Has fallado!</string>
+    <string name="correct">¡Correcto!</string>
+    <string name="button_file">Subir fichero</string>
+    <string name="button_picture">Sacar foto</string>
+    <string name="button_audio">Grabar audio</string>
+    <string name="button_video">Grabar vídeo</string>
+    <string name="no_camera">Tu móvil no dispone de cámara</string>
+    <string name="permission_neccesary">Permiso necesario</string>
+    <string name="ok">OK</string>
+    <string name="no_app">No dispones de la aplicación necesaria</string>
+    <string name="storage_rationale">El acceso al almacenamiento es necesario para poder guardar las fotos sacadas</string>
+    <string name="no_micro">Tu móvil no dispone de micrófono</string>
+    <string name="uploaded_ok">Ejercicio entregado correctamente</string>
+    <string name="uploaded_ko">Error al entregar el ejercicio</string>
+    <string name="test">Test</string>
+    <string name="exercise">Ejercicio</string>
+    <string name="loading">Cargando ...</string>
+</resources>

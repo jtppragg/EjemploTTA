@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/test_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.fragments.TestFragment"
+    android:layout_margin="@dimen/main_margin">
+
+<TextView
+    android:id="@+id/test_wording"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/main_margin"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+<RadioGroup
+    android:id="@+id/test_choices"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <!-- Populated programatically -->
+</RadioGroup>
+
+<Button
+    android:id="@+id/button_send_test"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_send"/>
+
+<Button
+    android:id="@+id/button_view_advise"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_advise"/>
+
+</LinearLayout>
